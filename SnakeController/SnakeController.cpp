@@ -62,11 +62,9 @@ Controller::Controller(IPort& p_displayPort, IPort& p_foodPort, IPort& p_scorePo
         throw ConfigurationError();
     }
 }
-
-void Controller::receive(std::unique_ptr<Event> e)
+void Controller::checkTime()
 {
-    try {
-        auto const& timerEvent = *dynamic_cast<EventT<TimeoutInd> const&>(*e);
+    
 
         Segment const& currentHead = m_segments.front();
 
@@ -124,6 +122,12 @@ void Controller::receive(std::unique_ptr<Event> e)
                     [](auto const& segment){ return not (segment.ttl > 0); }),
                 m_segments.end());
         }
+}
+void Controller::receive(std::unique_ptr<Event> e)
+{
+    try {
+        auto const& timerEvent = *dynamic_cast<EventT<TimeoutInd> const&>(*e);
+        checkTime();
     } catch (std::bad_cast&) {
         try {
             auto direction = dynamic_cast<EventT<DirectionInd> const&>(*e)->direction;

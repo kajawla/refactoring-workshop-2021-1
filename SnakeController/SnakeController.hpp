@@ -33,6 +33,7 @@ public:
     void receive(std::unique_ptr<Event> e) override;
 
 private:
+    void checkTime();
     struct Segment
     {
         int x;
